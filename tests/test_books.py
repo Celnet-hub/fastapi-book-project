@@ -43,9 +43,6 @@ def test_update_book():
     data = response.json()
     assert data["title"] == "The Hobbit: An Unexpected Journey"
 
-    # Introduce a failing assertion
-    assert data["title"] == "Incorrect Title"  # This will make the test fail
-
 
 
 def test_delete_book():
