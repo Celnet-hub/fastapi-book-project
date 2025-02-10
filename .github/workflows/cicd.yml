@@ -39,6 +39,8 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      - name: Create SSH directory
+        run: mkdir -p ~/.ssh
       - name: Add EC2 host to known hosts
         run: |
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
