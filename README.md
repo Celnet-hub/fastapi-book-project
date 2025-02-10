@@ -17,6 +17,9 @@ This project is a RESTful API built with FastAPI for managing a book collection.
 
 ```
 fastapi-book-project/
+├── .github/
+│   └── workflows/
+│       └── cicd.yml        # GitHub Actions CI/CD pipeline
 ├── api/
 │   ├── db/
 │   │   ├── __init__.py
@@ -97,11 +100,11 @@ uvicorn main:app
 
 ```json
 {
-  "id": 1,
-  "title": "Book Title",
-  "author": "Author Name",
-  "publication_year": 2024,
-  "genre": "Fantasy"
+	"id": 1,
+	"title": "Book Title",
+	"author": "Author Name",
+	"publication_year": 2024,
+	"genre": "Fantasy"
 }
 ```
 
@@ -128,6 +131,111 @@ The API includes proper error handling for:
 - Invalid book IDs
 - Invalid genre types
 - Malformed requests
+
+## Deployment
+
+### Prerequisites
+
+- An AWS EC2 instance running Ubuntu
+- SSH access to the EC2 instance
+- A domain name (optional)
+
+### Steps
+
+1. **SSH into your EC2 instance**:
+
+```bash
+ssh -i /path/to/your-key.pem ubuntu@your-ec2-ip
+```
+
+2. **Install necessary dependencies**:
+
+```bash
+sudo apt update
+sudo apt install python3 python3-pip nginx -y
+```
+
+3. **Clone the repository on the EC2 instance**:
+
+```bash
+git clone https://github.com/hng12-devbotops/fastapi-book-project.git
+cd fastapi-book-project
+```
+
+4. **Create a virtual environment and install dependencies**:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+5. **Create a Systemd service file**:
+
+```bash
+sudo nano /etc/systemd/system/fastapi.service
+```
+
+Add the following content to the file:
+
+```ini
+[Unit]
+Description=FastAPI Application
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/fastapi-book-project
+ExecStart=/home/ubuntu/fastapi-book-project/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start the service:
+
+```bash
+sudo systemctl enable fastapi.service
+sudo systemctl start fastapi.service
+```
+
+6. **Configure Nginx**:
+
+Create an Nginx configuration file:
+
+```bash
+sudo nano /etc/nginx/sites-available/fastapi
+```
+
+Add the following content to the file:
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;  # Replace with your domain or public IP
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+Enable the configuration and restart Nginx:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+7. **Access the API**:
+
+- Open your browser and navigate to `http://your-domain.com` or `http://your-ec2-ip`.
 
 ## Contributing
 
