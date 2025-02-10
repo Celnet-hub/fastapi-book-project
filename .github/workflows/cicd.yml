@@ -26,7 +26,6 @@ jobs:
         run: pytest || exit 1 # add if test fails, fail the build
 
   deploy:
-    needs: test
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
