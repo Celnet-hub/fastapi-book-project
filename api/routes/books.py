@@ -1,5 +1,5 @@
 from typing import OrderedDict
-invalide code
+invalid code
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 
