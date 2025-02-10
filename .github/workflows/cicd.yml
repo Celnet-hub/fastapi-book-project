@@ -23,7 +23,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run pytest
-        run: pytest
+        run: pytest || exit 1 # add if test fails, fail the build
 
   # deploy:
   #   if: github.event_name == 'push' || github.event_name == 'pull_request'
