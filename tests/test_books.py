@@ -44,6 +44,7 @@ def test_update_book():
     assert data["title"] == "The Hobbit: An Unexpected Journey"
 
 
+
 def test_delete_book():
     response = client.delete("/books/3")
     assert response.status_code == 204
