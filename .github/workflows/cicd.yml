@@ -4,13 +4,13 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - feature/getbooksbyID
+  # push:
+  #   branches:
+  #     - feature/getbooksbyID
 
 jobs:
   test:
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -27,7 +27,7 @@ jobs:
 
   deploy:
     needs: test
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
