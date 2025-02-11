@@ -20,4 +20,4 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run pytest
-        run: pytest || exit 1 # add if test fails, fail the build
+        run: pytest || exit 1 # if test fails, fail the build
