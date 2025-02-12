@@ -1,5 +1,8 @@
 # FastAPI Book Management API
 
+![Test workflow](https://github.com/Celnet-hub/fastapi-book-project/actions/workflows/test.yml/badge.svg)
+![Deployment workflow](https://github.com/Celnet-hub/fastapi-book-project/actions/workflows/deploy.yml/badge.svg)
+
 ## Overview
 
 This project is a RESTful API built with FastAPI for managing a book collection. It provides comprehensive CRUD (Create, Read, Update, Delete) operations for books with proper error handling, input validation, and documentation.
