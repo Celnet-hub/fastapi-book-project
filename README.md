@@ -1,5 +1,8 @@
 # FastAPI Book Management API
 
+![Test workflow](https://github.com/Celnet-hub/fastapi-book-project/actions/workflows/test.yml/badge.svg)
+![Deployment workflow](https://github.com/Celnet-hub/fastapi-book-project/actions/workflows/deploy.yml/badge.svg)
+
 ## Overview
 
 This project is a RESTful API built with FastAPI for managing a book collection. It provides comprehensive CRUD (Create, Read, Update, Delete) operations for books with proper error handling, input validation, and documentation.
@@ -19,7 +22,8 @@ This project is a RESTful API built with FastAPI for managing a book collection.
 fastapi-book-project/
 ├── .github/
 │   └── workflows/
-│       └── cicd.yml        # GitHub Actions CI/CD pipeline
+│       └── deploy.yml        # GitHub Actions CI/CD pipeline
+        └── test.yml  
 ├── api/
 │   ├── db/
 │   │   ├── __init__.py
@@ -52,7 +56,7 @@ fastapi-book-project/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/hng12-devbotops/fastapi-book-project.git
+git clone https://github.com/Celnet-hub/fastapi-book-project.git
 cd fastapi-book-project
 ```
 
@@ -158,7 +162,7 @@ sudo apt install python3 python3-pip nginx -y
 3. **Clone the repository on the EC2 instance**:
 
 ```bash
-git clone https://github.com/hng12-devbotops/fastapi-book-project.git
+git clone https://github.com/Celnet-hub/fastapi-book-project.git
 cd fastapi-book-project
 ```
 
@@ -185,8 +189,9 @@ After=network.target
 
 [Service]
 User=ubuntu
+Group=www-data
 WorkingDirectory=/home/ubuntu/fastapi-book-project
-ExecStart=/home/ubuntu/fastapi-book-project/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+ExecStart=/usr/bin/env uvicorn main:app --host 0.0.0.0 --port 8000
 Restart=always
 
 [Install]
