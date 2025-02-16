@@ -100,7 +100,7 @@ async def delete_book(requests: Request, book_id: int) -> None:
 
 # create a function that calls telex  webhook.
 async def call_webhook(event_name: str, message: str, status: str):
-    webhook_baseurl = "https://ping.telex.im/v1/webhooks/01950c06-251a-75c4-b85d-4b3aef8d5c6f"
+    webhook_baseurl = "https://ping.telex.im/v1/webhooks/01950cf0-02ed-7989-a383-98d5684f5aea"
     event_name = event_name
     message = message
     status = status
