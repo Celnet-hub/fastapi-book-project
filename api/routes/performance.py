@@ -37,7 +37,7 @@ async def performance(request: Request):
                 "default": f"{base_url}/api/v1/books",
             }
             ],
-        "target_url": f"{base_url}/target_url",
+        "target_url": f"{base_url}/api/v1/target_url",
     }
     return JSONResponse(
         status_code=status.HTTP_200_OK, content={"data": payload}
