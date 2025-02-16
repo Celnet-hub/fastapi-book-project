@@ -6,4 +6,4 @@ from api.routes import performance
 
 api_router = APIRouter()
 api_router.include_router(books.router, prefix="/books", tags=["books"])
-api_router.include_router(performance.router, prefix="/api-performance", tags=["performance"])
+api_router.include_router(performance.router, tags=["performance"])
