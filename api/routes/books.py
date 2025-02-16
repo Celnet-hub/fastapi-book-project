@@ -1,6 +1,7 @@
 from typing import OrderedDict
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Request
 from fastapi.responses import JSONResponse
+import httpx
 
 from api.db.schemas import Book, Genre, InMemoryDB
 
@@ -32,8 +33,14 @@ db.books = {
 }
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_book(book: Book):
+@router.post("/", status_code=status.HTTP_201_CREATED, name="create_book")
+async def create_book(request: Request, book: Book):
+
+    # call the webhook function
+    request_url = str(request.url)
+    await call_webhook("Creating Book", f"{request_url} Post endpoint was called", "success")
+
+    # add book
     db.add_book(book)
     return JSONResponse(
         status_code=status.HTTP_201_CREATED, content=book.model_dump()
@@ -41,15 +48,24 @@ async def create_book(book: Book):
 
 
 @router.get(
-    "/", response_model=OrderedDict[int, Book], status_code=status.HTTP_200_OK
+    "/", response_model=OrderedDict[int, Book], status_code=status.HTTP_200_OK, name = "get_all_books"
 )
-async def get_books() -> OrderedDict[int, Book]:
+async def get_books(request: Request) -> OrderedDict[int, Book]:
+
+    # call the webhook function
+    request_url = str(request.url)
+    await call_webhook("Getting All Books", f"{request_url} Get all books endpoint was called", "success")
+
     return db.get_books()
 
 # get books by ID
-@router.get("/{book_id}", response_model=Book, status_code=status.HTTP_200_OK)
-async def get_book(book_id: int) -> Book:
+@router.get("/{book_id}", response_model=Book, status_code=status.HTTP_200_OK, name="get_book")
+async def get_book(requests: Request, book_id: int) -> Book:
     try:
+        # call the webhook function
+        request_url = str(requests.url)
+        await call_webhook("Getting Book by ID", f"{request_url} Get book by ID endpoint was called", "success")
+
         return db.get_book(book_id).model_dump()
     except AttributeError:
         return JSONResponse(
@@ -58,16 +74,40 @@ async def get_book(book_id: int) -> Book:
         )
 
 
+# add tag to route
+@router.put("/{book_id}", response_model=Book, status_code=status.HTTP_200_OK, name="update_book")
+async def update_book(requests: Request, book_id: int, book: Book) -> Book:
+    # call the webhook function
+    request_url = str(requests.url)
+    await call_webhook("Updating Book", f"{request_url} Put endpoint was called", "success")
 
-@router.put("/{book_id}", response_model=Book, status_code=status.HTTP_200_OK)
-async def update_book(book_id: int, book: Book) -> Book:
     return JSONResponse(
         status_code=status.HTTP_200_OK,
         content=db.update_book(book_id, book).model_dump(),
     )
 
 
-@router.delete("/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_book(book_id: int) -> None:
+@router.delete("/{book_id}", status_code=status.HTTP_204_NO_CONTENT, name="delete_book")
+async def delete_book(requests: Request, book_id: int) -> None:
+
+    # call the webhook function
+    request_url = str(requests.url)
+    await call_webhook("Deleting Book", f"{request_url} Delete endpoint was called","success")
+
     db.delete_book(book_id)
     return JSONResponse(status_code=status.HTTP_204_NO_CONTENT, content=None)
+
+
+# create a function that calls telex  webhook.
+async def call_webhook(event_name: str, message: str, status: str):
+    webhook_baseurl = "https://ping.telex.im/v1/webhooks/01950c06-251a-75c4-b85d-4b3aef8d5c6f"
+    event_name = event_name
+    message = message
+    status = status
+    username = "Books Inventory APP" 
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"{webhook_baseurl}?event_name={event_name}&message={message}&status={status}&username={username}")
+        print(response.json())
+        # return response.json()
+
+
